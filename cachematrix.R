@@ -2,7 +2,7 @@
 ## the intent of caching the inverse so that it does not need to be recomputed
 ## each time it is needed.
 
-makeCacheMatrix <- function(x = matrix()) {
+makeCacheMatrix <- function(mat = matrix()) {
 
     matInv <- NULL
     
@@ -10,13 +10,13 @@ makeCacheMatrix <- function(x = matrix()) {
     # This basically reinitializes the object with a new matrix.
     #
     set <- function(inMat) {
-        x <<- inMat
+        mat    <<- inMat
         matInv <<- NULL
     }
     
     # Retrieve the original matrix from this object.
     #
-    get <- function() x
+    get <- function() mat
     
     # Store the matrix inverse in this object.
     #
