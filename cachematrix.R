@@ -5,7 +5,7 @@
 makeCacheMatrix <- function(mat = matrix()) {
 
     matSolved <- NULL
-    
+
     # Store a matrix in this object and clear the solved matrix.
     # This basically reinitializes the object with a new matrix.
     #
@@ -13,19 +13,19 @@ makeCacheMatrix <- function(mat = matrix()) {
         mat       <<- inMat
         matSolved <<- NULL
     }
-    
+
     # Retrieve the original matrix from this object.
     #
     get <- function() mat
-    
+
     # Store the solved matrix in this object.
     #
     setSolved <- function(inMatSolved) matSolved <<- inMatSolved
-    
+
     # Retrieve the solved matrix from this object.
     #
     getSolved <- function() matSolved
-    
+
     # Return the function list.
     #
     list(set       = set,
@@ -40,7 +40,7 @@ makeCacheMatrix <- function(mat = matrix()) {
 ## solved version, but use the cached version if it is available.
 
 cacheSolve <- function(x, ...) {
-    
+
     # Return the cached matrix if it exists.
     #
     matSolved <- x$getSolved()
@@ -48,11 +48,11 @@ cacheSolve <- function(x, ...) {
         message("getting cached data")
         return(matSolved)
     }
-    
+
     # Invoke solve() on the original matrix.
     #
     matSolved <- solve(x$get(), ...)
-    
+
     # Cache the solved matrix and return it.
     #
     x$setSolved(matSolved)
@@ -62,8 +62,8 @@ cacheSolve <- function(x, ...) {
 ## Unit Tests
 
 cacheSolveTest <- function() {
-    
-    ## Test basic caching
+
+    ## Test basic caching.
     ##
     n <- 3
     mat <- matrix(rnorm(1:(n*n)), nrow=n, ncol=n)
@@ -72,7 +72,7 @@ cacheSolveTest <- function() {
     matSolved2 <- cacheSolve(matCached)
     if (!identical(matSolved1, matSolved2))
         message("Cached version does not match solved version")
-    
+
     ## Use a time test to see if we really save time
     ##
     n <- 128
@@ -82,7 +82,7 @@ cacheSolveTest <- function() {
     time2 <- system.time(matSolved2 <- cacheSolve(matCached))
     if (time1["user.self"] < time2["user.self"])
         message("Solve time is less than cache time")
-    
+
     ## Compute machine epsilon (floating precision)
     ## This should be about 2^-53 on most machines.
     ##
@@ -91,27 +91,27 @@ cacheSolveTest <- function() {
         eps <- eps / 2.0
     eps <- eps * 2.0
 
-    ## This really just tests to see if the matrix inverse is computed 
-    ## correctly, which is more of a test of the solve() function. Multiply the 
-    ## original matrix by the inverse.  Subtract the identity and the result 
+    ## This really just tests to see if the matrix inverse is computed
+    ## correctly, which is more of a test of the solve() function. Multiply the
+    ## original matrix by the inverse.  Subtract the identity and the result
     ## should be a zero matrix, within the limits of machine precision.
-    ## 
-    ## Note that the allowable error will be much more than machine epsilon due 
+    ##
+    ## Note that the allowable error will be much more than machine epsilon due
     ## to the large number of operations in solve().  We just take a guess here,
     ## since all we are doing is looking for a result close to zero.  The
     ## allowable error should be porportional to the size of the matrix, and
     ## hence, the number of operations.
-    ## 
+    ##
     n <- 20
     mat <- matrix(rnorm(1:(n*n)), nrow=n, ncol=n)
     matCached <- makeCacheMatrix(mat)
     matSolved <- cacheSolve(matCached)
     tmp <- mat %*% matSolved
     tmp <- abs(tmp - diag(n))
-    b <- tmp > (eps * n * 64)
+    b <- tmp > (.Machine$double.eps * n * 64)
     if (sum(b) != 0)
         message("Incorrect matrix inversion")
-    
+
     ## Test some of the internals
     ##
     if (!identical(mat, matCached$get()))
