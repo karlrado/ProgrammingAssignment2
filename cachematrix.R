@@ -1,6 +1,6 @@
 ## Create a matrix object that stores the original matrix and its "solved
 ## version", with the intent of caching the solved matrix so that it does not
-## need to be recomputed each time it is needed.
+## need to be recomputed each time it is needed. 
 
 makeCacheMatrix <- function(mat = matrix()) {
 
